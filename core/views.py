@@ -11,3 +11,19 @@ def home(request):
 
     projects = Project.objects.all()
     return render(request, 'home.html', {'projects': projects})
+def all_projects(request):
+    projects = Project.objects.all()
+    return render(request, 'projects.html', {'projects': projects})
+
+
+def all_projects_view(request):
+    projects = Project.objects.all()
+    return render(request, 'all_projects.html', {'projects': projects})
+
+
+
+def contact_view(request):
+    if request.method == "POST":
+        # Bu yerda xabarni saqlash kodi bo'ladi
+        pass
+    return render(request, 'contact.html')
