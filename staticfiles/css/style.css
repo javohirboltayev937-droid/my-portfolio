@@ -1,0 +1,42 @@
+/* Umumiy fon va matn stili */
+body {
+    background-color: #1a1a1a; /* To'q rangli fon */
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Sarlavha uchun Typing (yozuv mashinkasi) effekti */
+.typing-effect {
+    font-size: 30px;
+    border-right: 3px solid #007bff;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+    animation: typing 3.5s steps(30, end) forwards, blink 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink {
+    from, to { border-color: transparent }
+    50% { border-color: #007bff }
+}
+
+/* Kartochkalar uchun Hover (sichqoncha borganda) effekti */
+.project-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.project-card:hover {
+    transform: translateY(-10px); /* Tepaga biroz ko'tariladi */
+    box-shadow: 0 10px 20px rgba(0, 123, 255, 0.5);
+    border-color: #007bff;
+}
