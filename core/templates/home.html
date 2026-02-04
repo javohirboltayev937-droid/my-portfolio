@@ -1,13 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Javohir Boltayev | Premium Backend Portfolio</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     <style>
         :root {
@@ -25,7 +29,6 @@
             overflow-x: hidden;
         }
 
-        /* Qimirlaydigan fon */
         #particles-js {
             position: fixed;
             width: 100%;
@@ -35,7 +38,6 @@
             left: 0;
         }
 
-        /* Navigatsiya */
         .navbar {
             background: rgba(5, 8, 22, 0.8) !important;
             backdrop-filter: blur(10px);
@@ -43,7 +45,6 @@
             padding: 20px 0;
         }
 
-        /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -54,9 +55,7 @@
         }
 
         .fw-extrabold { font-weight: 800; }
-        .opacity-90 { opacity: 0.9; }
 
-        /* Kartochkalar (Glassmorphism) */
         .project-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(15px);
@@ -80,19 +79,6 @@
             padding: 14px 35px;
             border-radius: 12px;
             font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .btn-custom:hover {
-            transform: scale(1.05);
-            color: white;
-            box-shadow: 0 5px 15px rgba(145, 94, 255, 0.4);
-        }
-
-        .skill-icon {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 15px;
             transition: 0.3s;
         }
 
@@ -131,51 +117,12 @@
                         Professional Backend Architect
                     </h5>
                     <h1 class="display-1 fw-extrabold mb-4">
-                        Men <span style="color: var(--primary-color);">Javohir Boltayev</span>
+                        Men <span style="color: var(--primary-color);" class="typing-text">Javohir Boltayev</span>
                     </h1>
                     <p class="fs-4 mb-5 opacity-90 leading-relaxed">
                         Men biznesingiz uchun <span class="text-info fw-bold">barqaror, xavfsiz va tezkor</span>
-                        backend ekotizimlarini yarataman. Mening kodim — bu sizning muvaffaqiyatli biznesingiz poydevori.
+                        backend ekotizimlarini yarataman.
                     </p>
-
-                    <div class="row mb-5 g-4">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-start">
-                                <i class="fas fa-shield-alt fs-4 text-info me-3 mt-1"></i>
-                                <div>
-                                    <h6 class="fw-bold">Xavfsiz Tizimlar</h6>
-                                    <p class="small opacity-75">Ma'lumotlar himoyasi va kiber-xavfsizlik standartlari asosida ishlash.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-start">
-                                <i class="fas fa-bolt fs-4 text-info me-3 mt-1"></i>
-                                <div>
-                                    <h6 class="fw-bold">Yuqori Tezlik</h6>
-                                    <p class="small opacity-75">Saniyada minglab so'rovlarni qabul qila oladigan optimallashtirilgan kod.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-start">
-                                <i class="fas fa-layer-group fs-4 text-info me-3 mt-1"></i>
-                                <div>
-                                    <h6 class="fw-bold">Masshtablanuvchi Arxitektura</h6>
-                                    <p class="small opacity-75">Loyihangiz o'sishi bilan birga kengaya oladigan mikroservislar.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-start">
-                                <i class="fas fa-headset fs-4 text-info me-3 mt-1"></i>
-                                <div>
-                                    <h6 class="fw-bold">Doimiy Aloqa</h6>
-                                    <p class="small opacity-75">Loyiha davomida va undan keyin ham 24/7 texnik yordam.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="d-flex gap-3 mt-4">
                         <a href="#projects" class="btn btn-custom btn-lg">Loyihalarni ko'rish</a>
@@ -193,7 +140,9 @@
                 {% for project in projects %}
                 <div class="col-md-4">
                     <div class="card h-100 project-card p-3">
+                        {% if project.image %}
                         <img src="{{ project.image.url }}" class="card-img-top rounded-4 mb-3" style="height: 220px; object-fit: cover;">
+                        {% endif %}
                         <div class="card-body">
                             <h4 class="card-title fw-bold text-white mb-3">{{ project.title }}</h4>
                             <p class="card-text opacity-60 mb-4">{{ project.description|truncatewords:12 }}</p>
@@ -217,7 +166,6 @@
                     <p class="mb-5 opacity-90">G'oyangizni haqiqatga aylantirish uchun hoziroq yozing.</p>
                     <div class="fs-5">
                         <p><i class="fab fa-telegram me-3"></i> @javohirboltayev</p>
-                        <p><i class="fas fa-envelope me-3"></i> javohir@example.com</p>
                     </div>
                 </div>
                 <div class="col-md-7 p-5">
@@ -242,7 +190,7 @@
         </div>
     </section>
 
-    <footer class="py-5 text-center text-white-50 mt-5">
+    <footer class="py-5 text-center text-white-50">
         <p>&copy; 2026 Javohir Boltayev | Django & AI Powered Portfolio</p>
     </footer>
 
