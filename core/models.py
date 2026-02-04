@@ -10,11 +10,12 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
-class Message(models.Model): # Yangi: Sayt orqali yozishsa shu yerga tushadi
+class Message(models.Model):
     full_name = models.CharField(max_length=100)
-    email = models.EmailField()
+    phone = models.CharField(max_length=20, null=True, blank=True) # YANGI: Telefon raqami uchun joy
+    email = models.EmailField(null=True, blank=True) # Endi email majburiy emas
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.full_name} dan xabar"
+        return f"{self.full_name} ({self.phone}) dan xabar"

@@ -86,8 +86,6 @@
             border-radius: 30px;
         }
 
-        .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
-
         section { position: relative; z-index: 2; }
     </style>
 </head>
@@ -97,13 +95,16 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-3" href="#">JB<span style="color: var(--primary-color);">.</span></a>
+            <a class="navbar-brand fw-bold fs-3" href="/">JB<span style="color: var(--primary-color);">.</span></a>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#">Asosiy</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#projects">Loyihalar</a></li>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/">Asosiy</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'projects_all' %}" target="_blank">Loyihalar</a></li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Bog'lanish</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <img src="{% static 'images/profile.jpg' %}" class="rounded-circle" style="width: 45px; height: 45px; object-fit: cover; border: 2px solid var(--primary-color);">
                     </li>
                 </ul>
             </div>
@@ -126,7 +127,7 @@
                     </p>
 
                     <div class="d-flex gap-3 mt-4">
-                        <a href="#projects" class="btn btn-custom btn-lg">Loyihalarni ko'rish</a>
+                        <a href="{% url 'projects_all' %}" target="_blank" class="btn btn-custom btn-lg">Loyihalarni ko'rish</a>
                         <button class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#contactModal">Bepul maslahat</button>
                     </div>
                 </div>
@@ -159,47 +160,54 @@
         </div>
     </section>
 
-    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-white">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="contactModalLabel">Xabar yuborish</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title fw-bold">Xabar yuborish</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <form method="POST">
+                    <form id="contactForm" onsubmit="handleSuccess(event)">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label class="form-label opacity-75">Ismingiz</label>
                             <input type="text" name="name" class="form-control bg-dark text-white border-secondary" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label opacity-75">Email</label>
-                            <input type="email" name="email" class="form-control bg-dark text-white border-secondary" required>
+                            <label class="form-label opacity-75">Telefon raqamingiz</label>
+                            <input type="tel" name="phone" class="form-control bg-dark text-white border-secondary" placeholder="+998" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label opacity-75">Xabar</label>
+                            <label class="form-label opacity-75">Xabaringiz</label>
                             <textarea name="message" class="form-control bg-dark text-white border-secondary" rows="4" required></textarea>
                         </div>
                         <button type="submit" class="btn btn-custom w-100 py-3 mt-2">Yuborish</button>
                     </form>
-                </div>
-                <div class="modal-footer justify-content-center border-0">
-                    <p class="small opacity-50"><i class="fab fa-telegram me-1"></i> @javohirboltayev</p>
+                    <div id="successMsg" class="text-center d-none py-4">
+                        <i class="fas fa-check-circle text-success display-4 mb-3"></i>
+                        <h4 class="fw-bold">Rahmat!</h4>
+                        <p>Tez orada siz bilan bog'lanamiz.</p>
+                        <button type="button" class="btn btn-outline-light mt-3" data-bs-dismiss="modal">Yopish</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <footer class="py-5 text-center text-white-50">
-        <p>&copy; 2026 Javohir Boltayev | Django & AI Powered Portfolio</p>
+        <p>&copy; 2026 Javohir Boltayev | Django & Python developer</p>
     </footer>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
     <script>
+        function handleSuccess(e) {
+            e.preventDefault();
+            document.getElementById('contactForm').classList.add('d-none');
+            document.getElementById('successMsg').classList.remove('d-none');
+        }
+
         particlesJS('particles-js', {
             "particles": {
                 "number": { "value": 70, "density": { "enable": true, "value_area": 800 } },
@@ -208,13 +216,8 @@
                 "opacity": { "value": 0.4 },
                 "size": { "value": 3, "random": true },
                 "line_linked": { "enable": true, "distance": 150, "color": "#38bdf8", "opacity": 0.3, "width": 1 },
-                "move": { "enable": true, "speed": 4, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
-            },
-            "interactivity": {
-                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
-                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } } }
-            },
-            "retina_detect": true
+                "move": { "enable": true, "speed": 4 }
+            }
         });
     </script>
 </body>
