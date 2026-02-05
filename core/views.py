@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from .models import Project, Message
 
 
@@ -9,16 +10,20 @@ def home(request):
         email = request.POST.get('email', '')
         message_text = request.POST.get('message')
 
-        # Telefon raqam bilan birga saqlaymiz
         Message.objects.create(
             full_name=name,
             phone=phone,
             email=email,
             body=message_text
         )
+
+
+        messages.success(request, "Xabaringiz yuborildi!")
+
         return redirect('home')
 
     projects = Project.objects.all()
+
     return render(request, 'home.html', {'projects': projects})
 
 
