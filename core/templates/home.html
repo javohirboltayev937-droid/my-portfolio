@@ -236,6 +236,44 @@
 
         footer { border-top: 1px solid var(--border); }
 
+        /* ===== Hero photo ===== */
+        .hero-photo-wrap {
+            position: relative;
+            width: 340px;
+            height: 340px;
+        }
+        .hero-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 38% 62% 54% 46% / 44% 40% 60% 56%;
+            border: 3px solid var(--primary);
+            position: relative;
+            z-index: 2;
+            animation: morph 10s ease-in-out infinite;
+        }
+        @keyframes morph {
+            0%,100% { border-radius: 38% 62% 54% 46% / 44% 40% 60% 56%; }
+            33%      { border-radius: 60% 40% 35% 65% / 55% 60% 40% 45%; }
+            66%      { border-radius: 45% 55% 65% 35% / 35% 50% 50% 65%; }
+        }
+        .hero-photo-ring {
+            position: absolute;
+            inset: -14px;
+            border-radius: 50%;
+            border: 1.5px dashed rgba(139,92,246,.45);
+            animation: spin 18s linear infinite;
+            z-index: 1;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .hero-photo-glow {
+            position: absolute;
+            inset: -30px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,92,246,.22), transparent 70%);
+            z-index: 0;
+        }
+
         ::selection { background: var(--primary); color: #fff; }
     </style>
 </head>
@@ -271,8 +309,8 @@
         <!-- ===== HERO ===== -->
         <section class="hero">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-10">
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
                         <span class="badge-status" data-aos="fade-up">
                             <span class="dot-live"></span> Yangi loyihalar uchun ochiqman
                         </span>
@@ -294,6 +332,15 @@
                             <div class="col-4 stat"><h3 class="gradient-text">3+</h3><p>Yillik tajriba</p></div>
                             <div class="col-4 stat"><h3 class="gradient-text">20+</h3><p>Tugatilgan loyiha</p></div>
                             <div class="col-4 stat"><h3 class="gradient-text">100%</h3><p>Mijoz mamnuniyati</p></div>
+                        </div>
+                    </div>
+
+                    <!-- ===== HERO RASM ===== -->
+                    <div class="col-lg-5 d-none d-lg-flex justify-content-center" data-aos="fade-left" data-aos-delay="200">
+                        <div class="hero-photo-wrap">
+                            <img src="{% static 'images/profile.jpg' %}" alt="Javohir Boltayev" class="hero-photo">
+                            <div class="hero-photo-ring"></div>
+                            <div class="hero-photo-glow"></div>
                         </div>
                     </div>
                 </div>
