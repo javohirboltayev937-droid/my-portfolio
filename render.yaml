@@ -22,7 +22,3 @@ services:
         value: "8240920421:AAFI_4mJmqvKiv3pd0nvwXSiAdjsyljCVpo"
       - key: TELEGRAM_CHAT_ID
         value: "8744146411"
-    disk:
-      name: media
-      mountPath: /opt/render/project/src/media
-      sizeGB: 1
