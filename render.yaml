@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: javohir-portfolio
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn portfolio_pro.wsgi --workers 2 --threads 4 --timeout 60 --log-file -"
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: "javohir-portfolio.onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://javohir-portfolio.onrender.com"
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+    disk:
+      name: media
+      mountPath: /opt/render/project/src/media
+      sizeGB: 1

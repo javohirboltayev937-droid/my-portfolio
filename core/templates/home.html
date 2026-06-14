@@ -4,161 +4,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Javohir Boltayev | Premium Backend Portfolio</title>
+    <title>Javohir Boltayev | Backend Architect</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     <style>
         :root {
-            --bg-dark: #050816;
-            --primary-color: #915eff;
-            --text-color: #f3f3f3;
-            --accent-blue: #38bdf8;
+            --bg: #05060f;
+            --bg-soft: #0b0d1c;
+            --primary: #8b5cf6;
+            --accent: #22d3ee;
+            --pink: #f472b6;
+            --text: #f4f5fb;
+            --muted: #9aa0b8;
+            --card: rgba(255, 255, 255, 0.035);
+            --border: rgba(255, 255, 255, 0.08);
         }
+
+        * { box-sizing: border-box; }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-color);
-            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Sora', sans-serif;
             scroll-behavior: smooth;
             overflow-x: hidden;
+            position: relative;
         }
 
-        #particles-js {
+        /* ===== Aurora mesh gradient fon ===== */
+        .aurora {
             position: fixed;
-            width: 100%;
-            height: 100%;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .aurora span {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.5;
+            animation: float 18s ease-in-out infinite;
+        }
+        .aurora .a1 { width: 480px; height: 480px; background: var(--primary); top: -120px; left: -80px; }
+        .aurora .a2 { width: 420px; height: 420px; background: var(--accent); bottom: -100px; right: -60px; animation-delay: -6s; }
+        .aurora .a3 { width: 360px; height: 360px; background: var(--pink); top: 40%; left: 55%; animation-delay: -12s; opacity: 0.35; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(60px, -40px) scale(1.15); }
+            66% { transform: translate(-40px, 50px) scale(0.9); }
+        }
+
+        /* nozik to'r (grid) qatlami */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 80%);
+            pointer-events: none;
+        }
+
+        /* sichqoncha ortidan yuradigan nur */
+        .cursor-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,92,246,0.12), transparent 65%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
             z-index: 1;
-            top: 0;
-            left: 0;
+            transition: opacity .3s;
         }
 
+        main, .navbar, footer { position: relative; z-index: 2; }
+
+        /* ===== Navbar ===== */
         .navbar {
-            background: rgba(5, 8, 22, 0.8) !important;
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 20px 0;
+            background: rgba(5, 6, 15, 0.55) !important;
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
         }
+        .navbar-brand { font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; }
+        .nav-link { color: var(--muted) !important; font-weight: 500; transition: .25s; position: relative; }
+        .nav-link:hover { color: var(--text) !important; }
 
+        /* ===== Hero ===== */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
+            padding: 140px 0 80px;
+        }
+        .badge-status {
+            display: inline-flex; align-items: center; gap: 9px;
+            background: var(--card); border: 1px solid var(--border);
+            padding: 8px 18px; border-radius: 100px;
+            font-size: .85rem; color: var(--muted);
+            backdrop-filter: blur(8px);
+        }
+        .dot-live {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #34d399; box-shadow: 0 0 0 0 rgba(52,211,153,.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(52,211,153,.7); }
+            70% { box-shadow: 0 0 0 10px rgba(52,211,153,0); }
+            100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.6rem, 7vw, 5.4rem);
+            font-weight: 800;
+            line-height: 1.02;
+            letter-spacing: -2px;
+            margin: 26px 0;
+        }
+        .gradient-text {
+            background: linear-gradient(110deg, var(--primary), var(--accent) 55%, var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-lead { font-size: 1.2rem; color: var(--muted); max-width: 620px; line-height: 1.7; }
+
+        /* ===== Tugmalar ===== */
+        .btn-glow {
+            background: linear-gradient(110deg, var(--primary), var(--accent));
+            border: none; color: #fff; font-weight: 600;
+            padding: 14px 34px; border-radius: 14px;
+            position: relative; transition: .3s;
+            box-shadow: 0 8px 30px rgba(139,92,246,.35);
+        }
+        .btn-glow:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(139,92,246,.5); color: #fff; }
+        .btn-ghost {
+            background: var(--card); border: 1px solid var(--border); color: var(--text);
+            padding: 14px 30px; border-radius: 14px; font-weight: 600; transition: .3s;
+            backdrop-filter: blur(8px);
+        }
+        .btn-ghost:hover { border-color: var(--primary); color: var(--text); transform: translateY(-3px); }
+
+        /* ===== Stat row ===== */
+        .stat { padding: 8px 0; }
+        .stat h3 { font-size: 2rem; font-weight: 800; margin: 0; }
+        .stat p { color: var(--muted); font-size: .9rem; margin: 0; }
+
+        /* ===== Marquee (tech stack) ===== */
+        .marquee {
+            overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            padding: 26px 0; background: rgba(255,255,255,.01);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+        }
+        .marquee-track { display: flex; gap: 60px; width: max-content; animation: scroll 24s linear infinite; }
+        .marquee-track span { display: inline-flex; align-items: center; gap: 12px; color: var(--muted); font-size: 1.15rem; font-weight: 600; white-space: nowrap; }
+        .marquee-track i { color: var(--primary); }
+        @keyframes scroll { to { transform: translateX(-50%); } }
+
+        /* ===== Section sarlavhalari ===== */
+        .section-tag { color: var(--accent); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; font-size: .8rem; }
+        .section-title { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -1px; }
+
+        /* ===== Spotlight project cards ===== */
+        .spot-card {
             position: relative;
-            z-index: 2;
-            padding-top: 100px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 22px;
+            height: 100%;
+            overflow: hidden;
+            transition: transform .4s, border-color .4s;
         }
-
-        .project-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            transition: 0.4s ease;
-            z-index: 2;
+        .spot-card::before {
+            content: "";
+            position: absolute; inset: 0;
+            background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(139,92,246,.18), transparent 60%);
+            opacity: 0; transition: opacity .4s;
+            pointer-events: none;
         }
-
-        .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(145, 94, 255, 0.2);
-            border-color: var(--primary-color);
+        .spot-card:hover::before { opacity: 1; }
+        .spot-card:hover { transform: translateY(-8px); border-color: rgba(139,92,246,.5); }
+        .spot-card img { border-radius: 14px; height: 200px; width: 100%; object-fit: cover; margin-bottom: 18px; }
+        .spot-card h4 { font-weight: 700; font-size: 1.25rem; }
+        .spot-card p { color: var(--muted); font-size: .94rem; line-height: 1.6; }
+        .chip {
+            background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.3);
+            color: var(--accent); padding: 5px 14px; border-radius: 100px;
+            font-size: .78rem; font-weight: 600; font-family: 'Space Grotesk', monospace;
         }
+        .gh-link { width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 12px; background: var(--card); border: 1px solid var(--border); color: var(--text); transition: .3s; }
+        .gh-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-        .btn-custom {
-            background: linear-gradient(90deg, #915eff 0%, #38bdf8 100%);
-            border: none;
-            color: white;
-            padding: 14px 35px;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .modal-content {
-            background: rgba(10, 15, 40, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--primary-color);
+        /* ===== CTA band ===== */
+        .cta-band {
+            background: linear-gradient(120deg, rgba(139,92,246,.12), rgba(34,211,238,.08));
+            border: 1px solid var(--border);
             border-radius: 30px;
+            padding: 60px 40px;
+            text-align: center;
         }
 
-        section { position: relative; z-index: 2; }
+        /* ===== Modal ===== */
+        .modal-content {
+            background: rgba(11, 13, 28, 0.92);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+        }
+        .form-control {
+            background: rgba(255,255,255,.04) !important;
+            border: 1px solid var(--border) !important;
+            color: var(--text) !important;
+            border-radius: 12px; padding: 12px 16px;
+        }
+        .form-control:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(139,92,246,.2) !important; }
+        .form-control::placeholder { color: #5a607a; }
+
+        footer { border-top: 1px solid var(--border); }
+
+        ::selection { background: var(--primary); color: #fff; }
     </style>
 </head>
 <body>
 
-    <div id="particles-js"></div>
+    <div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+    <div class="grid-overlay"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
 
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-3" href="/">JB<span style="color: var(--primary-color);">.</span></a>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="/">Asosiy</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'projects_all' %}" target="_blank">Loyihalar</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Bog'lanish</a>
+            <a class="navbar-brand" href="/">JB<span class="gradient-text">.</span></a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                    <li class="nav-item"><a class="nav-link px-3" href="/">Asosiy</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#projects">Loyihalar</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="{% url 'projects_all' %}">Barchasi</a></li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn-glow d-inline-block text-decoration-none" href="#" data-bs-toggle="modal" data-bs-target="#contactModal" style="padding:10px 24px;">Bog'lanish</a>
                     </li>
-                    <li class="nav-item ms-lg-3">
-                        <img src="{% static 'images/profile.jpg' %}" class="rounded-circle" style="width: 45px; height: 45px; object-fit: cover; border: 2px solid var(--primary-color);">
+                    <li class="nav-item ms-lg-2 d-none d-lg-block">
+                        <img src="{% static 'images/profile.jpg' %}" class="rounded-circle" style="width: 44px; height: 44px; object-fit: cover; border: 2px solid var(--primary);">
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-9 animate__animated animate__fadeIn">
-                    <h5 class="text-uppercase fw-bold mb-3" style="color: var(--primary-color); letter-spacing: 3px;">
-                        Professional Backend Architect
-                    </h5>
-                    <h1 class="display-1 fw-extrabold mb-4">
-                        Men <span style="color: var(--primary-color);" class="typing-text">Javohir Boltayev</span>
-                    </h1>
-                    <p class="fs-4 mb-5 opacity-90 leading-relaxed">
-                        Men biznesingiz uchun <span class="text-info fw-bold">barqaror, xavfsiz va tezkor</span>
-                        backend ekotizimlarini yarataman.
-                    </p>
+    <main>
+        <!-- ===== HERO ===== -->
+        <section class="hero">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10">
+                        <span class="badge-status" data-aos="fade-up">
+                            <span class="dot-live"></span> Yangi loyihalar uchun ochiqman
+                        </span>
+                        <h1 data-aos="fade-up" data-aos-delay="100">
+                            Men <span class="gradient-text typing-text">Javohir Boltayev</span><br>
+                            backend ekotizimlar quraman.
+                        </h1>
+                        <p class="hero-lead" data-aos="fade-up" data-aos-delay="200">
+                            Biznesingiz uchun <span style="color:var(--text);font-weight:600;">barqaror, xavfsiz va tezkor</span>
+                            backend tizimlar — Django va Python yordamida real natijaga aylanadi.
+                        </p>
 
-                    <div class="d-flex gap-3 mt-4">
-                        <a href="{% url 'projects_all' %}" target="_blank" class="btn btn-custom btn-lg">Loyihalarni ko'rish</a>
-                        <button class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#contactModal">Bepul maslahat</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                        <div class="d-flex flex-wrap gap-3 mt-4" data-aos="fade-up" data-aos-delay="300">
+                            <a href="#projects" class="btn-glow text-decoration-none">Loyihalarni ko'rish</a>
+                            <button class="btn-ghost" data-bs-toggle="modal" data-bs-target="#contactModal">Bepul maslahat olish</button>
+                        </div>
 
-    <section id="projects" class="py-5 bg-transparent">
-        <div class="container py-5">
-            <h2 class="text-center display-4 fw-bold mb-5">Mening <span style="color: var(--primary-color);">Ishlarim</span></h2>
-            <div class="row g-4">
-                {% for project in projects %}
-                <div class="col-md-4">
-                    <div class="card h-100 project-card p-3">
-                        {% if project.image %}
-                        <img src="{{ project.image.url }}" class="card-img-top rounded-4 mb-3" style="height: 220px; object-fit: cover;">
-                        {% endif %}
-                        <div class="card-body">
-                            <h4 class="card-title fw-bold text-white mb-3">{{ project.title }}</h4>
-                            <p class="card-text opacity-60 mb-4">{{ project.description|truncatewords:12 }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="badge rounded-pill bg-dark text-info border border-info px-3">{{ project.technology }}</span>
-                                <a href="{{ project.github_link }}" target="_blank" class="text-white fs-4"><i class="fab fa-github"></i></a>
-                            </div>
+                        <div class="row g-4 mt-4" data-aos="fade-up" data-aos-delay="400" style="max-width: 560px;">
+                            <div class="col-4 stat"><h3 class="gradient-text">3+</h3><p>Yillik tajriba</p></div>
+                            <div class="col-4 stat"><h3 class="gradient-text">20+</h3><p>Tugatilgan loyiha</p></div>
+                            <div class="col-4 stat"><h3 class="gradient-text">100%</h3><p>Mijoz mamnuniyati</p></div>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
+            </div>
+        </section>
+
+        <!-- ===== MARQUEE ===== -->
+        <div class="marquee">
+            <div class="marquee-track">
+                <span><i class="fab fa-python"></i> Python</span>
+                <span><i class="fas fa-server"></i> Django</span>
+                <span><i class="fas fa-database"></i> PostgreSQL</span>
+                <span><i class="fas fa-bolt"></i> REST API</span>
+                <span><i class="fab fa-docker"></i> Docker</span>
+                <span><i class="fab fa-git-alt"></i> Git</span>
+                <span><i class="fas fa-cloud"></i> Linux</span>
+                <!-- takror (uzluksiz aylanish uchun) -->
+                <span><i class="fab fa-python"></i> Python</span>
+                <span><i class="fas fa-server"></i> Django</span>
+                <span><i class="fas fa-database"></i> PostgreSQL</span>
+                <span><i class="fas fa-bolt"></i> REST API</span>
+                <span><i class="fab fa-docker"></i> Docker</span>
+                <span><i class="fab fa-git-alt"></i> Git</span>
+                <span><i class="fas fa-cloud"></i> Linux</span>
             </div>
         </div>
-    </section>
 
+        <!-- ===== PROJECTS ===== -->
+        <section id="projects" class="py-5">
+            <div class="container py-5">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <span class="section-tag">Portfolio</span>
+                    <h2 class="section-title mt-2">Mening <span class="gradient-text">Ishlarim</span></h2>
+                </div>
+                <div class="row g-4">
+                    {% for project in projects %}
+                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:forloop.counter0 }}0">
+                        <div class="spot-card">
+                            {% if project.image %}
+                            <img src="{{ project.image.url }}" alt="{{ project.title }}">
+                            {% endif %}
+                            <h4>{{ project.title }}</h4>
+                            <p class="mb-4">{{ project.description|truncatewords:14 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="chip">{{ project.technology }}</span>
+                                {% if project.github_link %}
+                                <a href="{{ project.github_link }}" target="_blank" class="gh-link"><i class="fab fa-github"></i></a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center text-muted py-5">Hozircha loyihalar qo'shilmagan.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== CTA ===== -->
+        <section class="py-5">
+            <div class="container py-4">
+                <div class="cta-band" data-aos="zoom-in">
+                    <h2 class="section-title mb-3">Loyihangizni <span class="gradient-text">hayotga</span> tatbiq etamizmi?</h2>
+                    <p class="hero-lead mx-auto mb-4">G'oyangizni ishonchli backend yechimga aylantiramiz. Keling, suhbatlashamiz.</p>
+                    <button class="btn-glow" data-bs-toggle="modal" data-bs-target="#contactModal">Hoziroq yozing</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== Modal ===== -->
     <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-white">
@@ -166,72 +372,78 @@
                     <h5 class="modal-title fw-bold">Xabar yuborish</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4">
-
-                    {% if messages %}
-                        {% for message in messages %}
-                        <div id="successMsg" class="text-center py-4 animate__animated animate__zoomIn">
-                            <i class="fas fa-check-circle text-success display-4 mb-3"></i>
-                            <h4 class="fw-bold">Rahmat!</h4>
-                            <p>Xabaringiz yuborildi. Tez orada siz bilan bog'lanamiz.</p>
-                            <button type="button" class="btn btn-outline-light mt-3" data-bs-dismiss="modal">Yopish</button>
+                <div class="modal-body p-4 pt-0">
+                    <!-- Muvaffaqiyat holati (yashirin) -->
+                    <div id="successMsg" class="text-center py-4" style="display:none;">
+                        <i class="fas fa-check-circle display-4 mb-3" style="color:#34d399;"></i>
+                        <h4 class="fw-bold">Rahmat!</h4>
+                        <p class="text-muted">Xabaringiz yuborildi. Tez orada siz bilan bog'lanamiz.</p>
+                        <button type="button" class="btn-ghost mt-2" data-bs-dismiss="modal">Yopish</button>
+                    </div>
+                    <!-- Xato xabari -->
+                    <div id="errorMsg" class="alert mb-3" style="display:none; background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.3); color:#fca5a5; border-radius:12px;"></div>
+                    <!-- Forma -->
+                    <form id="contactForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Ismingiz</label>
+                            <input type="text" name="name" id="cf-name" class="form-control" placeholder="Ismingizni kiriting" required>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <form id="contactForm" method="POST">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label class="form-label opacity-75">Ismingiz</label>
-                                <input type="text" name="name" class="form-control bg-dark text-white border-secondary" placeholder="Ismingizni kiriting" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label opacity-75">Telefon raqamingiz</label>
-                                <input type="tel" id="phoneInput" name="phone" class="form-control bg-dark text-white border-secondary" value="+998 " maxlength="19" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label opacity-75">Xabaringiz</label>
-                                <textarea name="message" class="form-control bg-dark text-white border-secondary" rows="4" placeholder="Loyihangiz haqida..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-custom w-100 py-3 mt-2">Yuborish</button>
-                        </form>
-                    {% endif %}
-
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Telefon raqamingiz</label>
+                            <input type="tel" id="phoneInput" name="phone" class="form-control" value="+998 " maxlength="19" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Xabaringiz</label>
+                            <textarea name="message" id="cf-message" class="form-control" rows="4" placeholder="Loyihangiz haqida..." required></textarea>
+                        </div>
+                        <button type="submit" id="cf-submit" class="btn-glow w-100 py-3 mt-2">Yuborish</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="py-5 text-center text-white-50">
-        <p>&copy; 2026 Javohir Boltayev | Django & Python developer</p>
+    <footer class="py-4 text-center text-muted">
+        <div class="container">
+            <p class="mb-0">&copy; 2026 Javohir Boltayev — Django &amp; Python developer</p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
-
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        {% if messages %}
-            document.addEventListener("DOMContentLoaded", function() {
-                var myModal = new bootstrap.Modal(document.getElementById('contactModal'));
-                myModal.show();
-            });
-        {% endif %}
+        AOS.init({ duration: 800, once: true, offset: 60 });
 
+        // sichqoncha ortidan yuruvchi nur
+        const glow = document.getElementById('cursorGlow');
+        window.addEventListener('mousemove', e => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+
+        // spotlight kartalar (sichqoncha pozitsiyasi)
+        document.querySelectorAll('.spot-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+                card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+            });
+        });
+
+        // telefon formatlash
         const phoneInput = document.getElementById('phoneInput');
-        if(phoneInput) {
+        if (phoneInput) {
             phoneInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (!e.target.value.startsWith('+998')) {
-                    e.target.value = '+998 ';
-                }
-                let phone = value.substring(3);
+                if (!e.target.value.startsWith('+998')) { e.target.value = '+998 '; }
+                let digits = e.target.value.replace(/\D/g, '').substring(3);
                 let formatted = '+998 ';
-                if (phone.length > 0) formatted += phone.substring(0, 2);
-                if (phone.length > 2) formatted += '-' + phone.substring(2, 5);
-                if (phone.length > 5) formatted += '-' + phone.substring(5, 7);
-                if (phone.length > 7) formatted += '-' + phone.substring(7, 9);
+                if (digits.length > 0) formatted += digits.substring(0, 2);
+                if (digits.length > 2) formatted += '-' + digits.substring(2, 5);
+                if (digits.length > 5) formatted += '-' + digits.substring(5, 7);
+                if (digits.length > 7) formatted += '-' + digits.substring(7, 9);
                 e.target.value = formatted;
             });
-
             phoneInput.addEventListener('keydown', function(e) {
                 if (e.target.selectionStart < 5 && (e.keyCode === 8 || e.keyCode === 46)) {
                     e.preventDefault();
@@ -239,15 +451,57 @@
             });
         }
 
-        particlesJS('particles-js', {
-            "particles": {
-                "number": { "value": 70, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#915eff" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.4 },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#38bdf8", "opacity": 0.3, "width": 1 },
-                "move": { "enable": true, "speed": 4 }
+        // Modal yopilganda formani qayta tiklash
+        document.getElementById('contactModal').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('contactForm').style.display = '';
+            document.getElementById('contactForm').reset();
+            if (phoneInput) phoneInput.value = '+998 ';
+            document.getElementById('successMsg').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+            document.getElementById('cf-submit').disabled = false;
+            document.getElementById('cf-submit').textContent = 'Yuborish';
+        });
+
+        // AJAX kontakt formasi
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('cf-submit');
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = 'Yuborilmoqda...';
+
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const payload = {
+                name: document.getElementById('cf-name').value.trim(),
+                phone: phoneInput.value.trim(),
+                message: document.getElementById('cf-message').value.trim(),
+            };
+
+            try {
+                const resp = await fetch('/api/contact/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    document.getElementById('contactForm').style.display = 'none';
+                    document.getElementById('successMsg').style.display = 'block';
+                } else {
+                    errorDiv.textContent = data.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.";
+                    errorDiv.style.display = 'block';
+                    btn.disabled = false;
+                    btn.textContent = 'Yuborish';
+                }
+            } catch {
+                errorDiv.textContent = "Tarmoq xatosi. Internet aloqasini tekshiring.";
+                errorDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Yuborish';
             }
         });
     </script>
