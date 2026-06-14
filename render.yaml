@@ -2,7 +2,9 @@ services:
   - type: web
     name: javohir-portfolio
     runtime: python
-    buildCommand: "./build.sh"
+    repo: https://github.com/javohirboltayev937-droid/my-portfolio
+    branch: main
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
     startCommand: "gunicorn portfolio_pro.wsgi --workers 2 --threads 4 --timeout 60 --log-file -"
     plan: free
     envVars:
@@ -17,9 +19,9 @@ services:
       - key: CSRF_TRUSTED_ORIGINS
         value: "https://javohir-portfolio.onrender.com"
       - key: TELEGRAM_BOT_TOKEN
-        sync: false
+        value: "8240920421:AAFI_4mJmqvKiv3pd0nvwXSiAdjsyljCVpo"
       - key: TELEGRAM_CHAT_ID
-        sync: false
+        value: "8744146411"
     disk:
       name: media
       mountPath: /opt/render/project/src/media
