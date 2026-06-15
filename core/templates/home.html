@@ -1,556 +1,821 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Javohir Boltayev | Backend Architect</title>
-
+    <title>Boltayev Javohir | AI Muhandis & Full Stack Dasturchi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
     <style>
         :root {
-            --bg: #05060f;
-            --bg-soft: #0b0d1c;
-            --primary: #8b5cf6;
-            --accent: #22d3ee;
-            --pink: #f472b6;
-            --text: #f4f5fb;
-            --muted: #9aa0b8;
-            --card: rgba(255, 255, 255, 0.035);
-            --border: rgba(255, 255, 255, 0.08);
+            --bg: #030410;
+            --bg-2: #07091a;
+            --bg-card: rgba(255,255,255,0.04);
+            --purple: #7c3aed;
+            --purple-l: #a78bfa;
+            --blue: #3b82f6;
+            --cyan: #06b6d4;
+            --pink: #ec4899;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --border: rgba(255,255,255,0.07);
+            --glow: rgba(124,58,237,0.4);
         }
+        *{box-sizing:border-box;margin:0;padding:0}
+        html{scroll-behavior:smooth}
+        body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;overflow-x:hidden;line-height:1.6}
 
-        * { box-sizing: border-box; }
+        /* ===== LOADER ===== */
+        #loader{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s,visibility .5s}
+        #loader.hide{opacity:0;visibility:hidden}
+        .loader-ring{width:70px;height:70px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--purple);border-right-color:var(--cyan);animation:spin 1s linear infinite}
+        .loader-text{margin-top:20px;font-size:.85rem;letter-spacing:4px;color:var(--muted);text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+        @keyframes spin{to{transform:rotate(360deg)}}
 
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Sora', sans-serif;
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-            position: relative;
-        }
+        /* ===== BACKGROUND ===== */
+        .bg-mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+        .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.18;animation:drift 20s ease-in-out infinite}
+        .orb-1{width:600px;height:600px;background:var(--purple);top:-200px;left:-150px}
+        .orb-2{width:500px;height:500px;background:var(--blue);bottom:-150px;right:-100px;animation-delay:-7s;opacity:.15}
+        .orb-3{width:400px;height:400px;background:var(--cyan);top:40%;left:60%;animation-delay:-14s;opacity:.1}
+        @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.1)}66%{transform:translate(-30px,40px) scale(.9)}}
+        .grid-bg{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:50px 50px;mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 70%);pointer-events:none}
 
-        /* ===== Aurora mesh gradient fon ===== */
-        .aurora {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        .aurora span {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(90px);
-            opacity: 0.5;
-            animation: float 18s ease-in-out infinite;
-        }
-        .aurora .a1 { width: 480px; height: 480px; background: var(--primary); top: -120px; left: -80px; }
-        .aurora .a2 { width: 420px; height: 420px; background: var(--accent); bottom: -100px; right: -60px; animation-delay: -6s; }
-        .aurora .a3 { width: 360px; height: 360px; background: var(--pink); top: 40%; left: 55%; animation-delay: -12s; opacity: 0.35; }
+        /* ===== NAVBAR ===== */
+        .navbar{background:rgba(3,4,16,.6)!important;backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 0;transition:.3s;position:fixed;width:100%;z-index:1000}
+        .navbar.scrolled{background:rgba(3,4,16,.95)!important;border-bottom-color:rgba(124,58,237,.25)}
+        .nav-brand{font-weight:800;font-size:1.4rem;letter-spacing:-1px;background:linear-gradient(135deg,var(--purple-l),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+        .nav-link{color:var(--muted)!important;font-weight:500;font-size:.9rem;padding:6px 14px!important;border-radius:8px;transition:.25s;position:relative}
+        .nav-link:hover{color:var(--text)!important;background:var(--bg-card)}
+        .btn-hire{background:linear-gradient(135deg,var(--purple),var(--blue));border:none;color:#fff!important;font-weight:600;padding:10px 24px;border-radius:12px;font-size:.9rem;transition:.3s;box-shadow:0 0 20px var(--glow)}
+        .btn-hire:hover{transform:translateY(-2px);box-shadow:0 0 35px var(--glow);color:#fff!important}
 
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(60px, -40px) scale(1.15); }
-            66% { transform: translate(-40px, 50px) scale(0.9); }
-        }
+        /* ===== HERO ===== */
+        #hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;position:relative;z-index:1}
+        .badge-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);padding:7px 18px;border-radius:100px;font-size:.8rem;color:var(--purple-l);font-family:'JetBrains Mono',monospace;margin-bottom:28px}
+        .badge-pill span{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 8px #34d399;animation:blink 2s infinite}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+        .hero-name{font-size:clamp(2.8rem,7vw,5.5rem);font-weight:900;line-height:1.05;letter-spacing:-2.5px;margin-bottom:18px}
+        .g-text{background:linear-gradient(135deg,var(--purple-l) 0%,var(--cyan) 60%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        .hero-subtitle{font-size:1.05rem;color:var(--purple-l);font-family:'JetBrains Mono',monospace;margin-bottom:20px;min-height:1.6em}
+        .hero-desc{font-size:1.05rem;color:var(--muted);max-width:540px;line-height:1.8;margin-bottom:36px}
+        .btn-glow{background:linear-gradient(135deg,var(--purple),var(--blue));border:none;color:#fff;font-weight:700;padding:14px 34px;border-radius:14px;font-size:1rem;transition:.3s;box-shadow:0 0 25px var(--glow);text-decoration:none;display:inline-block;cursor:pointer}
+        .btn-glow:hover{transform:translateY(-3px);box-shadow:0 0 45px var(--glow);color:#fff}
+        .btn-outline-glow{background:transparent;border:1px solid rgba(124,58,237,.5);color:var(--text);font-weight:600;padding:13px 30px;border-radius:14px;font-size:1rem;transition:.3s;text-decoration:none;display:inline-block;cursor:pointer;backdrop-filter:blur(8px)}
+        .btn-outline-glow:hover{border-color:var(--purple);background:rgba(124,58,237,.1);transform:translateY(-3px);color:var(--text)}
+        .social-bar{display:flex;gap:14px;margin-top:36px}
+        .social-icon{width:44px;height:44px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:1.1rem;transition:.3s;text-decoration:none}
+        .social-icon:hover{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.5);color:var(--purple-l);transform:translateY(-3px);box-shadow:0 8px 20px rgba(124,58,237,.2)}
 
-        /* nozik to'r (grid) qatlami */
-        .grid-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-            background-size: 60px 60px;
-            mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 80%);
-            pointer-events: none;
-        }
+        /* Hero photo */
+        .hero-photo-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+        .hero-photo-frame{position:relative;width:380px;height:460px}
+        .hero-photo-frame img{width:100%;height:100%;object-fit:cover;border-radius:30px;position:relative;z-index:2;border:1px solid rgba(124,58,237,.3)}
+        .photo-glow{position:absolute;inset:-20px;background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(59,130,246,.2),rgba(6,182,212,.15));border-radius:40px;filter:blur(25px);z-index:1}
+        .photo-border{position:absolute;inset:-2px;border-radius:31px;background:linear-gradient(135deg,var(--purple),var(--cyan),var(--blue));z-index:2;padding:2px}
+        .photo-border-inner{width:100%;height:100%;background:var(--bg);border-radius:29px}
+        .float-badge{position:absolute;background:rgba(7,9,26,.9);border:1px solid rgba(124,58,237,.4);backdrop-filter:blur(20px);border-radius:16px;padding:12px 18px;z-index:5;white-space:nowrap}
+        .float-badge-1{bottom:-20px;left:-30px}
+        .float-badge-2{top:30px;right:-40px}
+        .float-badge .fb-icon{font-size:1.4rem;margin-right:10px}
+        .float-badge .fb-text small{display:block;font-size:.7rem;color:var(--muted)}
+        .float-badge .fb-text strong{font-size:.9rem;font-weight:700}
 
-        /* sichqoncha ortidan yuradigan nur */
-        .cursor-glow {
-            position: fixed;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(139,92,246,0.12), transparent 65%);
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 1;
-            transition: opacity .3s;
-        }
+        /* ===== SECTION BASE ===== */
+        section{padding:90px 0;position:relative;z-index:1}
+        .sec-tag{display:inline-block;color:var(--cyan);font-size:.75rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:14px}
+        .sec-title{font-size:clamp(2rem,5vw,3rem);font-weight:800;letter-spacing:-1.5px;margin-bottom:16px}
+        .sec-line{width:60px;height:3px;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:2px;margin:0 auto 50px}
+        .sec-line.left{margin:0 0 50px}
 
-        main, .navbar, footer { position: relative; z-index: 2; }
+        /* ===== GLASS CARD ===== */
+        .glass{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;transition:.4s}
+        .glass:hover{border-color:rgba(124,58,237,.3);transform:translateY(-6px);box-shadow:0 20px 60px rgba(124,58,237,.1)}
 
-        /* ===== Navbar ===== */
-        .navbar {
-            background: rgba(5, 6, 15, 0.55) !important;
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 0;
-        }
-        .navbar-brand { font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; }
-        .nav-link { color: var(--muted) !important; font-weight: 500; transition: .25s; position: relative; }
-        .nav-link:hover { color: var(--text) !important; }
+        /* ===== ABOUT ===== */
+        #about{background:linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 100%)}
+        .about-photo{position:relative;border-radius:24px;overflow:hidden}
+        .about-photo img{width:100%;height:400px;object-fit:cover;border-radius:24px}
+        .about-photo-badge{position:absolute;bottom:20px;left:20px;right:20px;background:rgba(3,4,16,.85);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px}
+        .stat-card{text-align:center;padding:24px 20px;border-radius:18px}
+        .stat-card h3{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--purple-l),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        .stat-card p{color:var(--muted);font-size:.85rem;margin:0}
 
-        /* ===== Hero ===== */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 140px 0 80px;
-        }
-        .badge-status {
-            display: inline-flex; align-items: center; gap: 9px;
-            background: var(--card); border: 1px solid var(--border);
-            padding: 8px 18px; border-radius: 100px;
-            font-size: .85rem; color: var(--muted);
-            backdrop-filter: blur(8px);
-        }
-        .dot-live {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: #34d399; box-shadow: 0 0 0 0 rgba(52,211,153,.7);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(52,211,153,.7); }
-            70% { box-shadow: 0 0 0 10px rgba(52,211,153,0); }
-            100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
-        }
+        /* ===== SKILLS ===== */
+        #skills{background:var(--bg)}
+        .skill-card{padding:22px 18px;border-radius:18px;text-align:center;cursor:default}
+        .skill-card:hover{border-color:rgba(124,58,237,.4);box-shadow:0 0 30px rgba(124,58,237,.12)}
+        .skill-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 14px;background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(59,130,246,.1));border:1px solid rgba(124,58,237,.2)}
+        .skill-name{font-size:.9rem;font-weight:600;color:var(--text)}
+        .skill-level{font-size:.75rem;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace}
 
-        .hero h1 {
-            font-size: clamp(2.6rem, 7vw, 5.4rem);
-            font-weight: 800;
-            line-height: 1.02;
-            letter-spacing: -2px;
-            margin: 26px 0;
-        }
-        .gradient-text {
-            background: linear-gradient(110deg, var(--primary), var(--accent) 55%, var(--pink));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero-lead { font-size: 1.2rem; color: var(--muted); max-width: 620px; line-height: 1.7; }
+        /* ===== SERVICES ===== */
+        #services{background:var(--bg-2)}
+        .service-card{padding:34px 28px;border-radius:22px;height:100%}
+        .service-card:hover{border-color:rgba(124,58,237,.35);box-shadow:0 25px 60px rgba(124,58,237,.12)}
+        .service-num{font-size:.7rem;font-weight:700;letter-spacing:3px;color:var(--purple-l);font-family:'JetBrains Mono',monospace;margin-bottom:16px}
+        .service-icon-wrap{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:20px}
+        .service-card h4{font-size:1.15rem;font-weight:700;margin-bottom:12px}
+        .service-card p{color:var(--muted);font-size:.9rem;line-height:1.7;margin:0}
 
-        /* ===== Tugmalar ===== */
-        .btn-glow {
-            background: linear-gradient(110deg, var(--primary), var(--accent));
-            border: none; color: #fff; font-weight: 600;
-            padding: 14px 34px; border-radius: 14px;
-            position: relative; transition: .3s;
-            box-shadow: 0 8px 30px rgba(139,92,246,.35);
-        }
-        .btn-glow:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(139,92,246,.5); color: #fff; }
-        .btn-ghost {
-            background: var(--card); border: 1px solid var(--border); color: var(--text);
-            padding: 14px 30px; border-radius: 14px; font-weight: 600; transition: .3s;
-            backdrop-filter: blur(8px);
-        }
-        .btn-ghost:hover { border-color: var(--primary); color: var(--text); transform: translateY(-3px); }
+        /* ===== PROJECTS ===== */
+        #projects{background:var(--bg)}
+        .project-card{border-radius:22px;overflow:hidden;height:100%}
+        .project-card:hover{border-color:rgba(124,58,237,.4);box-shadow:0 25px 60px rgba(124,58,237,.15)}
+        .project-img{height:210px;overflow:hidden;position:relative}
+        .project-img-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative}
+        .project-img-inner::before{content:'';position:absolute;inset:0;background:inherit;opacity:.85}
+        .project-img-inner i{position:relative;z-index:1;opacity:.7}
+        .project-overlay{position:absolute;inset:0;background:rgba(3,4,16,.85);display:flex;align-items:center;justify-content:center;gap:14px;opacity:0;transition:.35s}
+        .project-card:hover .project-overlay{opacity:1}
+        .project-body{padding:22px}
+        .project-body h4{font-size:1.05rem;font-weight:700;margin-bottom:8px}
+        .project-body p{color:var(--muted);font-size:.85rem;line-height:1.6;margin-bottom:14px}
+        .tag{background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);color:var(--purple-l);padding:4px 12px;border-radius:100px;font-size:.72rem;font-weight:600;font-family:'Space Grotesk',sans-serif;display:inline-block;margin:2px}
 
-        /* ===== Stat row ===== */
-        .stat { padding: 8px 0; }
-        .stat h3 { font-size: 2rem; font-weight: 800; margin: 0; }
-        .stat p { color: var(--muted); font-size: .9rem; margin: 0; }
+        /* ===== TESTIMONIALS ===== */
+        #testimonials{background:var(--bg-2)}
+        .testi-card{padding:34px 28px;border-radius:22px;height:100%;position:relative}
+        .testi-card::before{content:'"';font-size:5rem;line-height:1;color:rgba(124,58,237,.15);font-family:serif;position:absolute;top:20px;left:28px}
+        .testi-text{font-size:.95rem;color:var(--muted);line-height:1.8;margin-bottom:24px;padding-top:30px}
+        .testi-author{display:flex;align-items:center;gap:14px}
+        .testi-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(124,58,237,.4)}
+        .testi-avatar-init{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0}
+        .stars{color:#fbbf24;font-size:.85rem;margin-bottom:4px}
 
-        /* ===== Marquee (tech stack) ===== */
-        .marquee {
-            overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-            padding: 26px 0; background: rgba(255,255,255,.01);
-            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-        }
-        .marquee-track { display: flex; gap: 60px; width: max-content; animation: scroll 24s linear infinite; }
-        .marquee-track span { display: inline-flex; align-items: center; gap: 12px; color: var(--muted); font-size: 1.15rem; font-weight: 600; white-space: nowrap; }
-        .marquee-track i { color: var(--primary); }
-        @keyframes scroll { to { transform: translateX(-50%); } }
+        /* ===== CONTACT ===== */
+        #contact{background:var(--bg)}
+        .cta-banner{border-radius:28px;padding:64px 48px;text-align:center;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(59,130,246,.1));border:1px solid rgba(124,58,237,.25);margin-bottom:70px}
+        .cta-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.2),transparent 70%)}
+        .cta-banner h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-1px;position:relative;z-index:1}
+        .cta-banner p{color:var(--muted);max-width:520px;margin:16px auto 30px;position:relative;z-index:1}
+        .contact-info-item{display:flex;align-items:center;gap:16px;padding:18px 22px;margin-bottom:14px}
+        .contact-info-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(59,130,246,.1));border:1px solid rgba(124,58,237,.25)}
+        .contact-info-item h6{font-size:.8rem;color:var(--muted);margin:0 0 2px}
+        .contact-info-item p{font-size:.95rem;font-weight:600;margin:0;color:var(--text)}
+        .form-ctrl{width:100%;background:rgba(255,255,255,.04)!important;border:1px solid var(--border)!important;color:var(--text)!important;border-radius:14px;padding:14px 18px;font-family:'Sora',sans-serif;font-size:.95rem;transition:.3s;outline:none}
+        .form-ctrl:focus{border-color:rgba(124,58,237,.5)!important;box-shadow:0 0 0 3px rgba(124,58,237,.1)!important;background:rgba(124,58,237,.04)!important}
+        .form-ctrl::placeholder{color:var(--muted)}
+        .form-label-c{font-size:.85rem;font-weight:600;color:var(--muted);margin-bottom:8px;display:block}
 
-        /* ===== Section sarlavhalari ===== */
-        .section-tag { color: var(--accent); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; font-size: .8rem; }
-        .section-title { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -1px; }
+        /* ===== FOOTER ===== */
+        footer{background:var(--bg-2);border-top:1px solid var(--border);padding:40px 0 30px;position:relative;z-index:1}
 
-        /* ===== Spotlight project cards ===== */
-        .spot-card {
-            position: relative;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            padding: 22px;
-            height: 100%;
-            overflow: hidden;
-            transition: transform .4s, border-color .4s;
-        }
-        .spot-card::before {
-            content: "";
-            position: absolute; inset: 0;
-            background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(139,92,246,.18), transparent 60%);
-            opacity: 0; transition: opacity .4s;
-            pointer-events: none;
-        }
-        .spot-card:hover::before { opacity: 1; }
-        .spot-card:hover { transform: translateY(-8px); border-color: rgba(139,92,246,.5); }
-        .spot-card img { border-radius: 14px; height: 200px; width: 100%; object-fit: cover; margin-bottom: 18px; }
-        .spot-card h4 { font-weight: 700; font-size: 1.25rem; }
-        .spot-card p { color: var(--muted); font-size: .94rem; line-height: 1.6; }
-        .chip {
-            background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.3);
-            color: var(--accent); padding: 5px 14px; border-radius: 100px;
-            font-size: .78rem; font-weight: 600; font-family: 'Space Grotesk', monospace;
-        }
-        .gh-link { width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center;
-            border-radius: 12px; background: var(--card); border: 1px solid var(--border); color: var(--text); transition: .3s; }
-        .gh-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+        /* ===== NOTIFICATIONS ===== */
+        #form-success{display:none;text-align:center;padding:30px}
+        #form-error{display:none;padding:12px 16px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:12px;margin-bottom:16px;font-size:.9rem}
 
-        /* ===== CTA band ===== */
-        .cta-band {
-            background: linear-gradient(120deg, rgba(139,92,246,.12), rgba(34,211,238,.08));
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            padding: 60px 40px;
-            text-align: center;
-        }
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar{width:5px}
+        ::-webkit-scrollbar-track{background:var(--bg)}
+        ::-webkit-scrollbar-thumb{background:linear-gradient(var(--purple),var(--blue));border-radius:3px}
 
-        /* ===== Modal ===== */
-        .modal-content {
-            background: rgba(11, 13, 28, 0.92);
-            backdrop-filter: blur(24px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-        }
-        .form-control {
-            background: rgba(255,255,255,.04) !important;
-            border: 1px solid var(--border) !important;
-            color: var(--text) !important;
-            border-radius: 12px; padding: 12px 16px;
-        }
-        .form-control:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(139,92,246,.2) !important; }
-        .form-control::placeholder { color: #5a607a; }
+        /* ===== UTILS ===== */
+        ::selection{background:var(--purple);color:#fff}
+        .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0}
 
-        footer { border-top: 1px solid var(--border); }
-
-        /* ===== Hero photo ===== */
-        .hero-photo-wrap {
-            position: relative;
-            width: 340px;
-            height: 340px;
+        @media(max-width:991px){
+            .hero-photo-frame{width:280px;height:340px;margin:0 auto}
+            #hero{padding-top:110px;text-align:center}
+            .social-bar{justify-content:center}
+            .hero-desc{margin:0 auto 36px}
+            .float-badge-1{left:0;bottom:-10px}
+            .float-badge-2{right:0;top:10px}
         }
-        .hero-photo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 38% 62% 54% 46% / 44% 40% 60% 56%;
-            border: 3px solid var(--primary);
-            position: relative;
-            z-index: 2;
-            animation: morph 10s ease-in-out infinite;
+        @media(max-width:767px){
+            .hero-photo-frame{width:240px;height:290px}
+            .cta-banner{padding:40px 24px}
         }
-        @keyframes morph {
-            0%,100% { border-radius: 38% 62% 54% 46% / 44% 40% 60% 56%; }
-            33%      { border-radius: 60% 40% 35% 65% / 55% 60% 40% 45%; }
-            66%      { border-radius: 45% 55% 65% 35% / 35% 50% 50% 65%; }
-        }
-        .hero-photo-ring {
-            position: absolute;
-            inset: -14px;
-            border-radius: 50%;
-            border: 1.5px dashed rgba(139,92,246,.45);
-            animation: spin 18s linear infinite;
-            z-index: 1;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .hero-photo-glow {
-            position: absolute;
-            inset: -30px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(139,92,246,.22), transparent 70%);
-            z-index: 0;
-        }
-
-        ::selection { background: var(--primary); color: #fff; }
     </style>
 </head>
 <body>
 
-    <div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
-    <div class="grid-overlay"></div>
-    <div class="cursor-glow" id="cursorGlow"></div>
+<!-- LOADER -->
+<div id="loader">
+    <div class="loader-ring"></div>
+    <p class="loader-text">Yuklanmoqda...</p>
+</div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="/">JB<span class="gradient-text">.</span></a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="nav">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                    <li class="nav-item"><a class="nav-link px-3" href="/">Asosiy</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#projects">Loyihalar</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="{% url 'projects_all' %}">Barchasi</a></li>
-                    <li class="nav-item ms-lg-2">
-                        <a class="btn-glow d-inline-block text-decoration-none" href="#" data-bs-toggle="modal" data-bs-target="#contactModal" style="padding:10px 24px;">Bog'lanish</a>
-                    </li>
-                    <li class="nav-item ms-lg-2 d-none d-lg-block">
-                        <img src="{% static 'images/profile.jpg' %}" class="rounded-circle" style="width: 44px; height: 44px; object-fit: cover; border: 2px solid var(--primary);">
-                    </li>
-                </ul>
-            </div>
+<!-- BACKGROUND -->
+<div class="bg-mesh">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+<div class="grid-bg"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg" id="navbar">
+    <div class="container">
+        <a class="nav-brand" href="/">BJ<span style="color:var(--cyan)">.</span></a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" style="color:var(--text)">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav mx-auto gap-1">
+                <li class="nav-item"><a class="nav-link" href="#about">Haqimda</a></li>
+                <li class="nav-item"><a class="nav-link" href="#skills">Ko'nikmalar</a></li>
+                <li class="nav-item"><a class="nav-link" href="#services">Xizmatlar</a></li>
+                <li class="nav-item"><a class="nav-link" href="#projects">Loyihalar</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Aloqa</a></li>
+            </ul>
+            <a href="#contact" class="btn-hire text-decoration-none ms-lg-3">Ishga Ol</a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <main>
-        <!-- ===== HERO ===== -->
-        <section class="hero">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-lg-7">
-                        <span class="badge-status" data-aos="fade-up">
-                            <span class="dot-live"></span> Yangi loyihalar uchun ochiqman
-                        </span>
-                        <h1 data-aos="fade-up" data-aos-delay="100">
-                            Men <span class="gradient-text typing-text">Javohir Boltayev</span><br>
-                            backend ekotizimlar quraman.
-                        </h1>
-                        <p class="hero-lead" data-aos="fade-up" data-aos-delay="200">
-                            Biznesingiz uchun <span style="color:var(--text);font-weight:600;">barqaror, xavfsiz va tezkor</span>
-                            backend tizimlar — Django va Python yordamida real natijaga aylanadi.
-                        </p>
-
-                        <div class="d-flex flex-wrap gap-3 mt-4" data-aos="fade-up" data-aos-delay="300">
-                            <a href="#projects" class="btn-glow text-decoration-none">Loyihalarni ko'rish</a>
-                            <button class="btn-ghost" data-bs-toggle="modal" data-bs-target="#contactModal">Bepul maslahat olish</button>
-                        </div>
-
-                        <div class="row g-4 mt-4" data-aos="fade-up" data-aos-delay="400" style="max-width: 560px;">
-                            <div class="col-4 stat"><h3 class="gradient-text">3+</h3><p>Yillik tajriba</p></div>
-                            <div class="col-4 stat"><h3 class="gradient-text">20+</h3><p>Tugatilgan loyiha</p></div>
-                            <div class="col-4 stat"><h3 class="gradient-text">100%</h3><p>Mijoz mamnuniyati</p></div>
-                        </div>
-                    </div>
-
-                    <!-- ===== HERO RASM ===== -->
-                    <div class="col-lg-5 d-none d-lg-flex justify-content-center" data-aos="fade-left" data-aos-delay="200">
-                        <div class="hero-photo-wrap">
-                            <img src="{% static 'images/profile.jpg' %}" alt="Javohir Boltayev" class="hero-photo">
-                            <div class="hero-photo-ring"></div>
-                            <div class="hero-photo-glow"></div>
-                        </div>
-                    </div>
+<!-- HERO -->
+<section id="hero">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="badge-pill">
+                    <span></span> Yangi loyihalar uchun bo'shman
+                </div>
+                <h1 class="hero-name">
+                    Salom, men<br><span class="g-text">Boltayev<br>Javohir</span>
+                </h1>
+                <p class="hero-subtitle" id="typed-text"></p>
+                <p class="hero-desc">
+                    Men <strong style="color:var(--text)">AI agentlar, biznes avtomatlashtirish tizimlari</strong> va zamonaviy veb-ilovalar yarataman — biznesingiz tezroq va aqlliroq o'sishi uchun.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#contact" class="btn-glow">Ishga Ol <i class="fas fa-arrow-right ms-2"></i></a>
+                    <a href="#projects" class="btn-outline-glow">Loyihalarimni Ko'r</a>
+                </div>
+                <div class="social-bar">
+                    <a href="https://github.com/javohirboltayev937-droid" target="_blank" class="social-icon" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://t.me/javohir_boltaev" target="_blank" class="social-icon" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="https://instagram.com/baxadirov1c.8" target="_blank" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
-        </section>
-
-        <!-- ===== MARQUEE ===== -->
-        <div class="marquee">
-            <div class="marquee-track">
-                <span><i class="fab fa-python"></i> Python</span>
-                <span><i class="fas fa-server"></i> Django</span>
-                <span><i class="fas fa-database"></i> PostgreSQL</span>
-                <span><i class="fas fa-bolt"></i> REST API</span>
-                <span><i class="fab fa-docker"></i> Docker</span>
-                <span><i class="fab fa-git-alt"></i> Git</span>
-                <span><i class="fas fa-cloud"></i> Linux</span>
-                <!-- takror (uzluksiz aylanish uchun) -->
-                <span><i class="fab fa-python"></i> Python</span>
-                <span><i class="fas fa-server"></i> Django</span>
-                <span><i class="fas fa-database"></i> PostgreSQL</span>
-                <span><i class="fas fa-bolt"></i> REST API</span>
-                <span><i class="fab fa-docker"></i> Docker</span>
-                <span><i class="fab fa-git-alt"></i> Git</span>
-                <span><i class="fas fa-cloud"></i> Linux</span>
-            </div>
-        </div>
-
-        <!-- ===== PROJECTS ===== -->
-        <section id="projects" class="py-5">
-            <div class="container py-5">
-                <div class="text-center mb-5" data-aos="fade-up">
-                    <span class="section-tag">Portfolio</span>
-                    <h2 class="section-title mt-2">Mening <span class="gradient-text">Ishlarim</span></h2>
-                </div>
-                <div class="row g-4">
-                    {% for project in projects %}
-                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:forloop.counter0 }}0">
-                        <div class="spot-card">
-                            {% if project.image %}
-                            <img src="{{ project.image.url }}" alt="{{ project.title }}">
-                            {% endif %}
-                            <h4>{{ project.title }}</h4>
-                            <p class="mb-4">{{ project.description|truncatewords:14 }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="chip">{{ project.technology }}</span>
-                                {% if project.github_link %}
-                                <a href="{{ project.github_link }}" target="_blank" class="gh-link"><i class="fab fa-github"></i></a>
-                                {% endif %}
-                            </div>
+            <div class="col-lg-6 d-flex justify-content-center" data-aos="fade-left">
+                <div class="hero-photo-wrap">
+                    <div class="hero-photo-frame">
+                        <div class="photo-glow"></div>
+                        <img src="{% static 'images/profile.jpg' %}" alt="Boltayev Javohir">
+                    </div>
+                    <div class="float-badge float-badge-1 glass" data-aos="zoom-in" data-aos-delay="400">
+                        <span class="fb-icon">🚀</span>
+                        <div class="fb-text">
+                            <small>Yakunlangan loyihalar</small>
+                            <strong>20+ Loyiha</strong>
                         </div>
                     </div>
-                    {% empty %}
-                    <div class="col-12 text-center text-muted py-5">Hozircha loyihalar qo'shilmagan.</div>
-                    {% endfor %}
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== CTA ===== -->
-        <section class="py-5">
-            <div class="container py-4">
-                <div class="cta-band" data-aos="zoom-in">
-                    <h2 class="section-title mb-3">Loyihangizni <span class="gradient-text">hayotga</span> tatbiq etamizmi?</h2>
-                    <p class="hero-lead mx-auto mb-4">G'oyangizni ishonchli backend yechimga aylantiramiz. Keling, suhbatlashamiz.</p>
-                    <button class="btn-glow" data-bs-toggle="modal" data-bs-target="#contactModal">Hoziroq yozing</button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- ===== Modal ===== -->
-    <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-white">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Xabar yuborish</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4 pt-0">
-                    <!-- Muvaffaqiyat holati (yashirin) -->
-                    <div id="successMsg" class="text-center py-4" style="display:none;">
-                        <i class="fas fa-check-circle display-4 mb-3" style="color:#34d399;"></i>
-                        <h4 class="fw-bold">Rahmat!</h4>
-                        <p class="text-muted">Xabaringiz yuborildi. Tez orada siz bilan bog'lanamiz.</p>
-                        <button type="button" class="btn-ghost mt-2" data-bs-dismiss="modal">Yopish</button>
+                    <div class="float-badge float-badge-2 glass" data-aos="zoom-in" data-aos-delay="500">
+                        <span class="fb-icon">⚡</span>
+                        <div class="fb-text">
+                            <small>Tajriba</small>
+                            <strong>3+ Yil</strong>
+                        </div>
                     </div>
-                    <!-- Xato xabari -->
-                    <div id="errorMsg" class="alert mb-3" style="display:none; background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.3); color:#fca5a5; border-radius:12px;"></div>
-                    <!-- Forma -->
-                    <form id="contactForm">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Ismingiz</label>
-                            <input type="text" name="name" id="cf-name" class="form-control" placeholder="Ismingizni kiriting" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Telefon raqamingiz</label>
-                            <input type="tel" id="phoneInput" name="phone" class="form-control" value="+998 " maxlength="19" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Xabaringiz</label>
-                            <textarea name="message" id="cf-message" class="form-control" rows="4" placeholder="Loyihangiz haqida..." required></textarea>
-                        </div>
-                        <button type="submit" id="cf-submit" class="btn-glow w-100 py-3 mt-2">Yuborish</button>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <footer class="py-4 text-center text-muted">
-        <div class="container">
-            <p class="mb-0">&copy; 2026 Javohir Boltayev — Django &amp; Python developer</p>
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5" data-aos="fade-right">
+                <div class="about-photo glass">
+                    <img src="{% static 'images/profile.jpg' %}" alt="Boltayev Javohir haqida">
+                    <div class="about-photo-badge">
+                        <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem;">🤖</div>
+                        <div>
+                            <div style="font-size:.8rem;color:var(--muted)">Mutaxassislik</div>
+                            <div style="font-weight:700;font-size:.95rem">AI va Avtomatlashtirish</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7" data-aos="fade-left">
+                <span class="sec-tag">Men Haqimda</span>
+                <h2 class="sec-title">Texnologiya va <span class="g-text">Innovatsiyaga Ishtiyoq</span></h2>
+                <div class="sec-line left"></div>
+                <p style="color:var(--muted);line-height:1.9;margin-bottom:20px">
+                    Men yosh, lekin tajribali <strong style="color:var(--text)">AI Avtomatlashtirish Muhandisi</strong> va <strong style="color:var(--text)">Full Stack Dasturchiman</strong>, kiberxavfsizlikka ham qiziqaman. Murakkab biznes jarayonlarni avtomatlashtiruvchi aqlli tizimlar yaratishga ixtisoslashganman.
+                </p>
+                <p style="color:var(--muted);line-height:1.9;margin-bottom:36px">
+                    AI-asosidagi mijozlar xizmatidan tortib, korporativ avtomatlashtirish platformalarigacha — real biznes natijalariga erishuvchi yechimlar taqdim etaman. Toza kod, kengaytiriladigan arxitektura va doimiy o'rganishga ishonaman.
+                </p>
+                <div class="row g-3">
+                    <div class="col-4">
+                        <div class="stat-card glass text-center">
+                            <h3 class="counter" data-target="3">0</h3>
+                            <p>Yil Tajriba</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-card glass text-center">
+                            <h3 class="counter" data-target="20">0</h3>
+                            <p>Loyiha Yakunlandi</p>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-card glass text-center">
+                            <h3 class="counter" data-target="15">0</h3>
+                            <p>Mamnun Mijoz</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({ duration: 800, once: true, offset: 60 });
+<div class="divider"></div>
 
-        // sichqoncha ortidan yuruvchi nur
-        const glow = document.getElementById('cursorGlow');
-        window.addEventListener('mousemove', e => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
-        });
+<!-- SKILLS -->
+<section id="skills">
+    <div class="container">
+        <div class="text-center" data-aos="fade-up">
+            <span class="sec-tag">Texnologiyalar</span>
+            <h2 class="sec-title">Mening <span class="g-text">Ko'nikma va Vositalarim</span></h2>
+            <div class="sec-line"></div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="0"><div class="skill-card glass"><div class="skill-icon" style="color:#3776ab"><i class="fab fa-python"></i></div><div class="skill-name">Python</div><div class="skill-level">Advanced</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="50"><div class="skill-card glass"><div class="skill-icon" style="color:#44b78b"><i class="fas fa-server"></i></div><div class="skill-name">Django</div><div class="skill-level">Advanced</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="100"><div class="skill-card glass"><div class="skill-icon" style="color:#009688"><i class="fas fa-bolt"></i></div><div class="skill-name">FastAPI</div><div class="skill-level">Advanced</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="150"><div class="skill-card glass"><div class="skill-icon" style="color:#f7df1e"><i class="fab fa-js"></i></div><div class="skill-name">JavaScript</div><div class="skill-level">Advanced</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="200"><div class="skill-card glass"><div class="skill-icon" style="color:#61dafb"><i class="fab fa-react"></i></div><div class="skill-name">React</div><div class="skill-level">Intermediate</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="250"><div class="skill-card glass"><div class="skill-icon" style="color:#aaaaaa"><i class="fas fa-layer-group"></i></div><div class="skill-name">Next.js</div><div class="skill-level">Intermediate</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="300"><div class="skill-card glass"><div class="skill-icon" style="color:#336791"><i class="fas fa-database"></i></div><div class="skill-name">PostgreSQL</div><div class="skill-level">Advanced</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="350"><div class="skill-card glass"><div class="skill-icon" style="color:#2496ed"><i class="fab fa-docker"></i></div><div class="skill-name">Docker</div><div class="skill-level">Intermediate</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="400"><div class="skill-card glass"><div class="skill-icon" style="color:#fcc624"><i class="fab fa-linux"></i></div><div class="skill-name">Linux</div><div class="skill-level">Advanced</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="450"><div class="skill-card glass"><div class="skill-icon" style="color:#ef4444"><i class="fas fa-shield-alt"></i></div><div class="skill-name">Cybersecurity</div><div class="skill-level">Enthusiast</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="500"><div class="skill-card glass"><div class="skill-icon" style="color:#a78bfa"><i class="fas fa-robot"></i></div><div class="skill-name">AI Automation</div><div class="skill-level">Expert</div></div></div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="550"><div class="skill-card glass"><div class="skill-icon" style="color:#10b981"><i class="fas fa-brain"></i></div><div class="skill-name">OpenAI API</div><div class="skill-level">Expert</div></div></div>
+        </div>
+    </div>
+</section>
 
-        // spotlight kartalar (sichqoncha pozitsiyasi)
-        document.querySelectorAll('.spot-card').forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const r = card.getBoundingClientRect();
-                card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-                card.style.setProperty('--my', (e.clientY - r.top) + 'px');
-            });
-        });
+<div class="divider"></div>
 
-        // telefon formatlash
-        const phoneInput = document.getElementById('phoneInput');
-        if (phoneInput) {
-            phoneInput.addEventListener('input', function(e) {
-                if (!e.target.value.startsWith('+998')) { e.target.value = '+998 '; }
-                let digits = e.target.value.replace(/\D/g, '').substring(3);
-                let formatted = '+998 ';
-                if (digits.length > 0) formatted += digits.substring(0, 2);
-                if (digits.length > 2) formatted += '-' + digits.substring(2, 5);
-                if (digits.length > 5) formatted += '-' + digits.substring(5, 7);
-                if (digits.length > 7) formatted += '-' + digits.substring(7, 9);
-                e.target.value = formatted;
-            });
-            phoneInput.addEventListener('keydown', function(e) {
-                if (e.target.selectionStart < 5 && (e.keyCode === 8 || e.keyCode === 46)) {
-                    e.preventDefault();
-                }
-            });
+<!-- SERVICES -->
+<section id="services">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="sec-tag">Nima Qilaman</span>
+            <h2 class="sec-title">Mening <span class="g-text">Xizmatlarim</span></h2>
+            <div class="sec-line"></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="service-card glass">
+                    <div class="service-num">01</div>
+                    <div class="service-icon-wrap" style="background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(99,102,241,.1));border:1px solid rgba(124,58,237,.25)"><i class="fas fa-robot" style="color:#a78bfa"></i></div>
+                    <h4>AI Agent Yaratish</h4>
+                    <p>GPT-4 va LangChain yordamida mijozlar muloqoti, ma'lumotlar qayta ishlash va murakkab qaror qabul qilishni avtomatlashtiradigan aqlli AI agentlar yarataman.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="80">
+                <div class="service-card glass">
+                    <div class="service-num">02</div>
+                    <div class="service-icon-wrap" style="background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(6,182,212,.1));border:1px solid rgba(59,130,246,.25)"><i class="fas fa-cogs" style="color:#60a5fa"></i></div>
+                    <h4>Biznes Jarayonlarini Avtomatlashtirish</h4>
+                    <p>Takroriy ish jarayonlarini avtomatlashtirish, qo'lda xatolarni kamaytirish va aqlli avtomatlashtirish orqali mahsuldorlikni 10 barobarga oshirish.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="160">
+                <div class="service-card glass">
+                    <div class="service-num">03</div>
+                    <div class="service-icon-wrap" style="background:linear-gradient(135deg,rgba(6,182,212,.2),rgba(16,185,129,.1));border:1px solid rgba(6,182,212,.25)"><i class="fas fa-code" style="color:#22d3ee"></i></div>
+                    <h4>Veb-Ilova Ishlab Chiqish</h4>
+                    <p>Django, FastAPI, React va Next.js yordamida zamonaviy UI/UX bilan yuqori unumdorlikdagi, kengaytiriladigan veb-ilovalar loyihalashtirish va ishlab chiqish.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="service-card glass">
+                    <div class="service-num">04</div>
+                    <div class="service-icon-wrap" style="background:linear-gradient(135deg,rgba(236,72,153,.2),rgba(239,68,68,.1));border:1px solid rgba(236,72,153,.25)"><i class="fas fa-plug" style="color:#f472b6"></i></div>
+                    <h4>API Integratsiyasi</h4>
+                    <p>Uchinchi tomon APIlar, to'lov tizimlari, CRM va tashqi xizmatlarni mavjud tizimlaringizga muammosiz ulash va integratsiya qilish.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="80">
+                <div class="service-card glass">
+                    <div class="service-num">05</div>
+                    <div class="service-icon-wrap" style="background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(234,179,8,.1));border:1px solid rgba(245,158,11,.25)"><i class="fas fa-chart-bar" style="color:#fbbf24"></i></div>
+                    <h4>CRM va ERP Tizimlari</h4>
+                    <p>Biznesingiz ehtiyojlariga moslashtirilgan maxsus CRM va ERP yechimlar yaratish — jamoa hamkorligi va ma'lumotlar boshqaruvini yaxshilash.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="160">
+                <div class="service-card glass">
+                    <div class="service-num">06</div>
+                    <div class="service-icon-wrap" style="background:linear-gradient(135deg,rgba(239,68,68,.2),rgba(220,38,38,.1));border:1px solid rgba(239,68,68,.25)"><i class="fas fa-shield-alt" style="color:#f87171"></i></div>
+                    <h4>Kiberxavfsizlik Maslahati</h4>
+                    <p>Zaifliklarni baholash, xavfsizlik bo'yicha eng yaxshi amaliyotlarni joriy etish va raqamli aktivlaringizni zamonaviy kiberxavflardan himoya qilish.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="sec-tag">Portfolio</span>
+            <h2 class="sec-title">Tanlangan <span class="g-text">Loyihalar</span></h2>
+            <div class="sec-line"></div>
+        </div>
+        <div class="row g-4">
+            <!-- Static showcase projects -->
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="project-card glass">
+                    <div class="project-img" style="background:linear-gradient(135deg,#1a0533,#2d1b69)">
+                        <div class="project-img-inner"><i class="fas fa-robot" style="color:#a78bfa"></i></div>
+                        <div class="project-overlay">
+                            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-icon"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <h4>AI Mijozlar Xizmati Boti</h4>
+                        <p>GPT-4 va LangChain yordamida kuniga 1000+ so'rovni 95% aniqlik bilan qayta ishlaydigan aqlli chatbot.</p>
+                        <span class="tag">Python</span><span class="tag">OpenAI</span><span class="tag">Django</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="80">
+                <div class="project-card glass">
+                    <div class="project-img" style="background:linear-gradient(135deg,#0c1a3a,#1e3a5f)">
+                        <div class="project-img-inner"><i class="fas fa-cogs" style="color:#60a5fa"></i></div>
+                        <div class="project-overlay">
+                            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-icon"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <h4>Biznes Avtomatlashtirish Platformasi</h4>
+                        <p>50+ xodimli logistika kompaniyasi uchun qo'lda ishni 80% ga kamaytiradigan to'liq avtomatlashtirish platformasi.</p>
+                        <span class="tag">FastAPI</span><span class="tag">Celery</span><span class="tag">Redis</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="160">
+                <div class="project-card glass">
+                    <div class="project-img" style="background:linear-gradient(135deg,#0a2518,#064e3b)">
+                        <div class="project-img-inner"><i class="fas fa-users" style="color:#34d399"></i></div>
+                        <div class="project-overlay">
+                            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-icon"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <h4>CRM Tizimi</h4>
+                        <p>B2B kompaniya uchun savdo quvuri, mijozlar boshqaruvi va tahlil paneli bilan maxsus CRM tizimi.</p>
+                        <span class="tag">Django</span><span class="tag">PostgreSQL</span><span class="tag">React</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="project-card glass">
+                    <div class="project-img" style="background:linear-gradient(135deg,#2d1515,#7f1d1d)">
+                        <div class="project-img-inner"><i class="fas fa-shopping-cart" style="color:#fca5a5"></i></div>
+                        <div class="project-overlay">
+                            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-icon"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <h4>Elektron Tijorat Sayti</h4>
+                        <p>AI mahsulot tavsiyalari, to'lov integratsiyasi va admin panel bilan to'liq funksional elektron tijorat platformasi.</p>
+                        <span class="tag">Next.js</span><span class="tag">FastAPI</span><span class="tag">Stripe</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="80">
+                <div class="project-card glass">
+                    <div class="project-img" style="background:linear-gradient(135deg,#1a1a0a,#3d2c00)">
+                        <div class="project-img-inner"><i class="fas fa-shield-alt" style="color:#fbbf24"></i></div>
+                        <div class="project-overlay">
+                            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-icon"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <h4>Kiberxavfsizlik Paneli</h4>
+                        <p>Tahdidlarni aniqlash, zaifliklarni skanerlash va hodisalar hisoboti bilan real vaqtli xavfsizlik monitoring paneli.</p>
+                        <span class="tag">Python</span><span class="tag">React</span><span class="tag">Linux</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="160">
+                <div class="project-card glass">
+                    <div class="project-img" style="background:linear-gradient(135deg,#1a0a2e,#4c1d95)">
+                        <div class="project-img-inner"><i class="fas fa-pen-fancy" style="color:#c4b5fd"></i></div>
+                        <div class="project-overlay">
+                            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-icon"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <h4>AI Kontent Generator</h4>
+                        <p>SEO-optimallashtirilgan blog postlar, ijtimoiy media matni va marketing materiallari yaratuvchi AI-asosidagi vosita.</p>
+                        <span class="tag">OpenAI</span><span class="tag">Django</span><span class="tag">Docker</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a href="{% url 'projects_all' %}" class="btn-outline-glow">Barcha Loyihalar <i class="fas fa-arrow-right ms-2"></i></a>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="sec-tag">Fikrlar</span>
+            <h2 class="sec-title">Mijozlar <span class="g-text">Nima Deydi</span></h2>
+            <div class="sec-line"></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="testi-card glass">
+                    <div class="stars">★★★★★</div>
+                    <p class="testi-text">Javohir bizga haftasiga 40+ soat tejaydigan ajoyib AI avtomatlashtirish tizimini yaratdi. Loyiha davomida uning texnik mahorati va muloqoti beqiyos edi.</p>
+                    <div class="testi-author">
+                        <div class="testi-avatar-init">SA</div>
+                        <div>
+                            <div style="font-weight:700;font-size:.95rem">Sarvar Axmedov</div>
+                            <div style="font-size:.8rem;color:var(--muted)">Direktor, TechStart UZ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="testi-card glass">
+                    <div class="stars">★★★★★</div>
+                    <p class="testi-text">U yaratgan CRM tizimi savdo jarayonimizni o'zgartirdi. Birinchi oyda 3 baravar ko'proq bitim yopdik. Juda professional, vaqtida va byudjet doirasida yetkazdi.</p>
+                    <div class="testi-author">
+                        <div class="testi-avatar-init">MK</div>
+                        <div>
+                            <div style="font-weight:700;font-size:.95rem">Malika Karimova</div>
+                            <div style="font-size:.8rem;color:var(--muted)">Savdo Direktori, GreenBiz</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="testi-card glass">
+                    <div class="stars">★★★★★</div>
+                    <p class="testi-text">Javohir bilan ishlashdan keyin kiberxavfsizlik darajamiz sezilarli yaxshilandi. U kritik zaifliklarni tezda aniqlab, mustahkam himoya choralarini joriy etdi.</p>
+                    <div class="testi-author">
+                        <div class="testi-avatar-init">DJ</div>
+                        <div>
+                            <div style="font-weight:700;font-size:.95rem">Doniyor Jalolov</div>
+                            <div style="font-size:.8rem;color:var(--muted)">CTO, FinanceApp</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+    <div class="container">
+        <!-- CTA Banner -->
+        <div class="cta-banner" data-aos="zoom-in">
+            <h2>Birgalikda <span class="g-text">Ajoyib Narsa Yarataylik</span></h2>
+            <p>Loyihangiz bormi? AI, avtomatlashtirish va zamonaviy veb-dasturlash bilan maqsadlaringizga qanday erishishni muhokama qilaylik.</p>
+            <a href="https://t.me/javohir_boltaev" target="_blank" class="btn-glow">Suhbat Boshlash <i class="fas fa-paper-plane ms-2"></i></a>
+        </div>
+
+        <div class="row g-5">
+            <div class="col-lg-5" data-aos="fade-right">
+                <span class="sec-tag">Aloqa</span>
+                <h2 class="sec-title" style="font-size:2rem">Bog'lanish <span class="g-text">Vaqti</span></h2>
+                <p style="color:var(--muted);margin-bottom:30px;line-height:1.8">Yangi loyihalar, ijodiy g'oyalar yoki hamkorlik imkoniyatlarini muhokama qilishga doim tayyor turaman.</p>
+
+                <a href="https://t.me/javohir_boltaev" target="_blank" style="text-decoration:none">
+                <div class="contact-info-item glass">
+                    <div class="contact-info-icon"><i class="fab fa-telegram-plane" style="color:#0088cc"></i></div>
+                    <div><h6>Telegram</h6><p>@javohir_boltaev</p></div>
+                </div></a>
+                <a href="https://instagram.com/baxadirov1c.8" target="_blank" style="text-decoration:none">
+                <div class="contact-info-item glass">
+                    <div class="contact-info-icon"><i class="fab fa-instagram" style="color:#e1306c"></i></div>
+                    <div><h6>Instagram</h6><p>@baxadirov1c.8</p></div>
+                </div></a>
+                <a href="https://github.com/javohirboltayev937-droid" target="_blank" style="text-decoration:none">
+                <div class="contact-info-item glass">
+                    <div class="contact-info-icon"><i class="fab fa-github" style="color:var(--text)"></i></div>
+                    <div><h6>GitHub</h6><p>javohirboltayev937-droid</p></div>
+                </div></a>
+            </div>
+            <div class="col-lg-7" data-aos="fade-left">
+                <div class="glass" style="padding:36px;border-radius:24px">
+                    <div id="form-success">
+                        <div style="font-size:3rem;margin-bottom:16px">✅</div>
+                        <h4 class="fw-bold mb-2">Xabar Yuborildi!</h4>
+                        <p style="color:var(--muted)">Rahmat! 24 soat ichida javob beraman.</p>
+                        <button onclick="resetForm()" class="btn-outline-glow mt-3" style="font-size:.9rem;padding:10px 24px">Yana Yubor</button>
+                    </div>
+                    <div id="contact-form-wrap">
+                        <div id="form-error"></div>
+                        <form id="contactForm">
+                            {% csrf_token %}
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label-c">Ismingiz</label>
+                                    <input type="text" id="cf-name" class="form-ctrl" placeholder="Boltayev Javohir" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label-c">Telefon Raqam</label>
+                                    <input type="tel" id="phoneInput" class="form-ctrl" placeholder="+998 90-000-00-00" value="+998 " maxlength="19" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label-c">Mavzu</label>
+                                <input type="text" id="cf-subject" class="form-ctrl" placeholder="Loyiha muhokamasi">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label-c">Xabaringiz</label>
+                                <textarea id="cf-message" class="form-ctrl" rows="5" placeholder="Loyihangiz haqida yozing..." required style="resize:vertical"></textarea>
+                            </div>
+                            <button type="submit" id="cf-submit" class="btn-glow w-100" style="border:none;font-size:1rem">
+                                Xabar Yuborish <i class="fas fa-paper-plane ms-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-4 mb-3 mb-md-0">
+                <span class="nav-brand">BJ<span style="color:var(--cyan)">.</span></span>
+                <p style="color:var(--muted);font-size:.85rem;margin-top:8px">AI va kod bilan kelajak qurilmoqda</p>
+            </div>
+            <div class="col-md-4 text-center mb-3 mb-md-0">
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="#about" style="color:var(--muted);text-decoration:none;font-size:.85rem;transition:.2s" onmouseover="this.style.color='var(--purple-l)'" onmouseout="this.style.color='var(--muted)'">Haqimda</a>
+                    <a href="#projects" style="color:var(--muted);text-decoration:none;font-size:.85rem;transition:.2s" onmouseover="this.style.color='var(--purple-l)'" onmouseout="this.style.color='var(--muted)'">Loyihalar</a>
+                    <a href="#contact" style="color:var(--muted);text-decoration:none;font-size:.85rem;transition:.2s" onmouseover="this.style.color='var(--purple-l)'" onmouseout="this.style.color='var(--muted)'">Aloqa</a>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-flex justify-content-md-end justify-content-center gap-3">
+                    <a href="https://github.com/javohirboltayev937-droid" target="_blank" class="social-icon" style="width:38px;height:38px"><i class="fab fa-github"></i></a>
+                    <a href="https://t.me/javohir_boltaev" target="_blank" class="social-icon" style="width:38px;height:38px"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="https://instagram.com/baxadirov1c.8" target="_blank" class="social-icon" style="width:38px;height:38px"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div style="border-top:1px solid var(--border);margin-top:28px;padding-top:22px;text-align:center">
+            <p style="color:var(--muted);font-size:.82rem;margin:0">© 2026 <strong style="color:var(--purple-l)">Boltayev Javohir</strong>. Barcha huquqlar himoyalangan. Django yordamida ❤️ bilan yaratildi.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // Loader
+    window.addEventListener('load', () => {
+        setTimeout(() => document.getElementById('loader').classList.add('hide'), 600);
+    });
+
+    // AOS
+    AOS.init({ duration: 700, once: true, offset: 50 });
+
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').classList.toggle('scrolled', scrollY > 50);
+    });
+
+    // Typing animation
+    const titles = ['AI Avtomatlashtirish Muhandisi', 'Full Stack Dasturchi', 'Kiberxavfsizlik Mutaxassisi'];
+    let ti = 0, ci = 0, del = false;
+    const el = document.getElementById('typed-text');
+    function type() {
+        const cur = titles[ti];
+        if (!del) {
+            el.textContent = cur.slice(0, ++ci);
+            if (ci === cur.length) { del = true; return setTimeout(type, 2000); }
+        } else {
+            el.textContent = cur.slice(0, --ci);
+            if (ci === 0) { del = false; ti = (ti + 1) % titles.length; }
         }
+        setTimeout(type, del ? 40 : 80);
+    }
+    type();
 
-        // Modal yopilganda formani qayta tiklash
-        document.getElementById('contactModal').addEventListener('hidden.bs.modal', function () {
-            document.getElementById('contactForm').style.display = '';
-            document.getElementById('contactForm').reset();
-            if (phoneInput) phoneInput.value = '+998 ';
-            document.getElementById('successMsg').style.display = 'none';
-            document.getElementById('errorMsg').style.display = 'none';
-            document.getElementById('cf-submit').disabled = false;
-            document.getElementById('cf-submit').textContent = 'Yuborish';
+    // Counter animation
+    const counters = document.querySelectorAll('.counter');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (!e.isIntersecting) return;
+            const target = +e.target.dataset.target;
+            let count = 0;
+            const step = Math.ceil(target / 40);
+            const timer = setInterval(() => {
+                count = Math.min(count + step, target);
+                e.target.textContent = count + '+';
+                if (count >= target) clearInterval(timer);
+            }, 40);
+            observer.unobserve(e.target);
         });
+    }, { threshold: 0.5 });
+    counters.forEach(c => observer.observe(c));
 
-        // AJAX kontakt formasi
-        document.getElementById('contactForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('cf-submit');
-            const errorDiv = document.getElementById('errorMsg');
-            errorDiv.style.display = 'none';
-            btn.disabled = true;
-            btn.textContent = 'Yuborilmoqda...';
+    // Phone formatting
+    const phoneInput = document.getElementById('phoneInput');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            if (!e.target.value.startsWith('+998')) e.target.value = '+998 ';
+            let digits = e.target.value.replace(/\D/g, '').substring(3);
+            let fmt = '+998 ';
+            if (digits.length > 0) fmt += digits.substring(0, 2);
+            if (digits.length > 2) fmt += '-' + digits.substring(2, 5);
+            if (digits.length > 5) fmt += '-' + digits.substring(5, 7);
+            if (digits.length > 7) fmt += '-' + digits.substring(7, 9);
+            e.target.value = fmt;
+        });
+        phoneInput.addEventListener('keydown', function(e) {
+            if (e.target.selectionStart < 5 && (e.keyCode === 8 || e.keyCode === 46)) e.preventDefault();
+        });
+    }
 
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-            const payload = {
-                name: document.getElementById('cf-name').value.trim(),
-                phone: phoneInput.value.trim(),
-                message: document.getElementById('cf-message').value.trim(),
-            };
+    // Contact form AJAX
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('cf-submit');
+        const errDiv = document.getElementById('form-error');
+        errDiv.style.display = 'none';
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yuborilmoqda...';
 
-            try {
-                const resp = await fetch('/api/contact/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken,
-                    },
-                    body: JSON.stringify(payload),
-                });
-                const data = await resp.json();
-                if (data.success) {
-                    document.getElementById('contactForm').style.display = 'none';
-                    document.getElementById('successMsg').style.display = 'block';
-                } else {
-                    errorDiv.textContent = data.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.";
-                    errorDiv.style.display = 'block';
-                    btn.disabled = false;
-                    btn.textContent = 'Yuborish';
-                }
-            } catch {
-                errorDiv.textContent = "Tarmoq xatosi. Internet aloqasini tekshiring.";
-                errorDiv.style.display = 'block';
+        const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const subject = document.getElementById('cf-subject').value;
+        const msg = document.getElementById('cf-message').value.trim();
+        const fullMsg = subject ? `[${subject}]\n${msg}` : msg;
+
+        try {
+            const res = await fetch('/api/contact/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+                body: JSON.stringify({
+                    name: document.getElementById('cf-name').value.trim(),
+                    phone: phoneInput.value.trim(),
+                    message: fullMsg,
+                }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('contact-form-wrap').style.display = 'none';
+                document.getElementById('form-success').style.display = 'block';
+            } else {
+                errDiv.textContent = data.error || 'Xatolik yuz berdi. Qayta urinib ko\'ring.';
+                errDiv.style.display = 'block';
                 btn.disabled = false;
-                btn.textContent = 'Yuborish';
+                btn.innerHTML = 'Xabar Yuborish <i class="fas fa-paper-plane ms-2"></i>';
             }
-        });
-    </script>
+        } catch {
+            errDiv.textContent = 'Tarmoq xatosi. Internet aloqangizni tekshiring.';
+            errDiv.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = 'Xabar Yuborish <i class="fas fa-paper-plane ms-2"></i>';
+        }
+    });
+
+    function resetForm() {
+        document.getElementById('contactForm').reset();
+        if (phoneInput) phoneInput.value = '+998 ';
+        document.getElementById('contact-form-wrap').style.display = 'block';
+        document.getElementById('form-success').style.display = 'none';
+        document.getElementById('form-error').style.display = 'none';
+        document.getElementById('cf-submit').disabled = false;
+        document.getElementById('cf-submit').innerHTML = 'Send Message <i class="fas fa-paper-plane ms-2"></i>';
+    }
+</script>
 </body>
 </html>
